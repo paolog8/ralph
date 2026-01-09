@@ -4,13 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What is Ralph?
 
-Ralph is an autonomous AI agent loop that spawns fresh Amp instances repeatedly until all PRD items are complete. Each iteration has clean context - memory persists only through git history, `progress.txt`, and `prd.json`.
+Ralph is an autonomous AI agent loop that spawns fresh agent instances (Amp or Claude Code) repeatedly until all PRD items are complete. Each iteration has clean context - memory persists only through git history, `progress.txt`, and `prd.json`.
 
 ## Commands
 
 ### Running Ralph (in projects that use it)
 ```bash
-./ralph.sh [max_iterations]  # Default: 10 iterations
+./ralph.sh <agent> [max_iterations]
+
+# Examples:
+./ralph.sh amp          # Run with Amp, 10 iterations
+./ralph.sh claude       # Run with Claude Code (Opus model), 10 iterations
+./ralph.sh claude 5     # Run with Claude Code, 5 iterations
 ```
 
 ### Flowchart Development
@@ -37,8 +42,11 @@ git log --oneline -10
 ## Architecture
 
 ### Core Loop (ralph.sh)
-- Spawns fresh Amp instances in a loop (max 10 iterations by default)
-- Pipes `prompt.md` into each Amp instance with `--dangerously-allow-all`
+- Spawns fresh agent instances in a loop (max 10 iterations by default)
+- Supports two agents:
+  - **Amp**: Uses `amp --dangerously-allow-all`
+  - **Claude Code**: Uses `claude --model opus --dangerously-skip-permissions`
+- Pipes `prompt.md` into each agent instance
 - Archives previous runs when `branchName` changes
 - Exits when `<promise>COMPLETE</promise>` appears in output
 - Each iteration is stateless - no memory carries over except:
@@ -48,7 +56,7 @@ git log --oneline -10
 
 ### Key Files
 - `ralph.sh` - Main bash loop that orchestrates iterations
-- `prompt.md` - Instructions given to each Amp instance
+- `prompt.md` - Instructions given to each agent instance
 - `prd.json` - User stories with `passes` boolean (task list)
 - `prd.json.example` - Reference for PRD format
 - `progress.txt` - Append-only log of learnings for future iterations
@@ -76,7 +84,7 @@ git log --oneline -10
 ```
 
 ### Iteration Workflow
-Each Amp instance follows this cycle:
+Each agent instance follows this cycle:
 1. Read `prd.json` and `progress.txt`
 2. Checkout/create branch from `branchName`
 3. Pick highest priority story where `passes: false`
@@ -158,7 +166,9 @@ Interactive React Flow visualization at `flowchart/`:
 
 ## Configuration
 
-### Recommended Amp Settings
+### Agent-Specific Settings
+
+#### For Amp Users
 Add to `~/.config/amp/settings.json`:
 ```json
 {
@@ -167,6 +177,9 @@ Add to `~/.config/amp/settings.json`:
 ```
 
 Enables automatic handoff when context fills, allowing Ralph to handle large stories.
+
+#### For Claude Code Users
+Claude Code automatically uses the Opus model when running Ralph, which provides the best reasoning capabilities for complex coding tasks. No additional configuration needed.
 
 ### Installing Skills Globally
 ```bash

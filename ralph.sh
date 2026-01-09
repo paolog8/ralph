@@ -1,10 +1,30 @@
 #!/bin/bash
 # Ralph Wiggum - Long-running AI agent loop
-# Usage: ./ralph.sh [max_iterations]
+# Usage: ./ralph.sh <agent> [max_iterations]
+#   agent: "amp" or "claude"
+#   max_iterations: number of iterations (default: 10)
 
 set -e
 
-MAX_ITERATIONS=${1:-10}
+# Check if agent parameter is provided
+if [ -z "$1" ]; then
+  echo "Error: Agent parameter is required"
+  echo "Usage: ./ralph.sh <agent> [max_iterations]"
+  echo "  agent: 'amp' or 'claude'"
+  echo "  max_iterations: number (default: 10)"
+  exit 1
+fi
+
+AGENT="$1"
+MAX_ITERATIONS=${2:-10}
+
+# Validate agent parameter
+if [ "$AGENT" != "amp" ] && [ "$AGENT" != "claude" ]; then
+  echo "Error: Invalid agent '$AGENT'"
+  echo "Agent must be 'amp' or 'claude'"
+  exit 1
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PRD_FILE="$SCRIPT_DIR/prd.json"
 PROGRESS_FILE="$SCRIPT_DIR/progress.txt"
@@ -51,16 +71,20 @@ if [ ! -f "$PROGRESS_FILE" ]; then
   echo "---" >> "$PROGRESS_FILE"
 fi
 
-echo "Starting Ralph - Max iterations: $MAX_ITERATIONS"
+echo "Starting Ralph with $AGENT - Max iterations: $MAX_ITERATIONS"
 
 for i in $(seq 1 $MAX_ITERATIONS); do
   echo ""
   echo "═══════════════════════════════════════════════════════"
-  echo "  Ralph Iteration $i of $MAX_ITERATIONS"
+  echo "  Ralph Iteration $i of $MAX_ITERATIONS (using $AGENT)"
   echo "═══════════════════════════════════════════════════════"
-  
-  # Run amp with the ralph prompt
-  OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr) || true
+
+  # Run the appropriate agent with the ralph prompt
+  if [ "$AGENT" = "amp" ]; then
+    OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr) || true
+  elif [ "$AGENT" = "claude" ]; then
+    OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" | claude --model opus --dangerously-skip-permissions 2>&1 | tee /dev/stderr) || true
+  fi
   
   # Check for completion signal
   if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then

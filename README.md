@@ -10,8 +10,11 @@ Based on [Geoffrey Huntley's Ralph pattern](https://ghuntley.com/ralph/).
 
 ## Prerequisites
 
-- [Amp CLI](https://ampcode.com) installed and authenticated
+- An AI coding agent:
+  - [Amp CLI](https://ampcode.com) installed and authenticated, OR
+  - [Claude Code](https://claude.ai/code) installed and authenticated
 - `jq` installed (`brew install jq` on macOS)
+- `gh` CLI installed (`brew install gh` on macOS) for automatic PR creation
 - A git repository for your project
 
 ## Setup
@@ -37,7 +40,7 @@ cp -r skills/prd ~/.config/amp/skills/
 cp -r skills/ralph ~/.config/amp/skills/
 ```
 
-### Configure Amp auto-handoff (recommended)
+### Configure Amp auto-handoff (optional, for Amp users)
 
 Add to `~/.config/amp/settings.json`:
 
@@ -74,10 +77,17 @@ This creates `prd.json` with user stories structured for autonomous execution.
 ### 3. Run Ralph
 
 ```bash
-./scripts/ralph/ralph.sh [max_iterations]
+./scripts/ralph/ralph.sh <agent> [max_iterations]
 ```
 
-Default is 10 iterations.
+- `agent`: Choose `amp` or `claude` (required)
+- `max_iterations`: Number of iterations (optional, default: 10)
+
+**Examples:**
+```bash
+./scripts/ralph/ralph.sh amp      # Run with Amp, 10 iterations
+./scripts/ralph/ralph.sh claude 5 # Run with Claude Code (Opus model), 5 iterations
+```
 
 Ralph will:
 1. Create a feature branch (from PRD `branchName`)
@@ -97,8 +107,8 @@ Ralph will:
 
 | File | Purpose |
 |------|---------|
-| `ralph.sh` | The bash loop that spawns fresh Amp instances |
-| `prompt.md` | Instructions given to each Amp instance |
+| `ralph.sh` | The bash loop that spawns fresh agent instances (Amp or Claude Code) |
+| `prompt.md` | Instructions given to each agent instance |
 | `prd.json` | User stories with `passes` status (the task list) |
 | `prd.json.example` | Example PRD format for reference |
 | `progress.txt` | Append-only learnings for future iterations |
@@ -120,11 +130,29 @@ npm install
 npm run dev
 ```
 
+## Agent Selection
+
+Ralph supports two AI coding agents:
+
+### Amp
+- Use `./ralph.sh amp`
+- Requires Amp CLI installed and authenticated
+- Uses `--dangerously-allow-all` flag for autonomous operation
+
+### Claude Code
+- Use `./ralph.sh claude`
+- Requires Claude Code installed and authenticated
+- Uses Opus model by default for best reasoning
+- Uses `--dangerously-skip-permissions` flag for autonomous operation
+- Recommended for complex reasoning tasks
+
+Both agents follow the same workflow and use the same `prompt.md` instructions.
+
 ## Critical Concepts
 
 ### Each Iteration = Fresh Context
 
-Each iteration spawns a **new Amp instance** with clean context. The only memory between iterations is:
+Each iteration spawns a **new agent instance** with clean context. The only memory between iterations is:
 - Git history (commits from previous iterations)
 - `progress.txt` (learnings and context)
 - `prd.json` (which stories are done)
