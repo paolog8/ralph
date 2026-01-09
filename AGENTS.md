@@ -18,7 +18,7 @@ cd flowchart && npm run build
 
 # Examples:
 ./ralph.sh amp          # Run with Amp, 10 iterations
-./ralph.sh claude       # Run with Claude Code (Opus), 10 iterations
+./ralph.sh claude       # Run with Claude Code (Opus Plan), 10 iterations
 ./ralph.sh claude 5     # Run with Claude Code, 5 iterations
 ```
 
@@ -47,4 +47,4 @@ npm run dev
 - Stories should be small enough to complete in one context window
 - Always update AGENTS.md with discovered patterns for future iterations
 - When all stories pass, Ralph creates a pull request before exiting
-- Claude Code uses Opus model by default for best reasoning
+- Claude Code uses Opus Plan model by default for extended planning and reasoning

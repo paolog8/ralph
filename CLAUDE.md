@@ -14,7 +14,7 @@ Ralph is an autonomous AI agent loop that spawns fresh agent instances (Amp or C
 
 # Examples:
 ./ralph.sh amp          # Run with Amp, 10 iterations
-./ralph.sh claude       # Run with Claude Code (Opus model), 10 iterations
+./ralph.sh claude       # Run with Claude Code (Opus Plan model), 10 iterations
 ./ralph.sh claude 5     # Run with Claude Code, 5 iterations
 ```
 
@@ -45,7 +45,7 @@ git log --oneline -10
 - Spawns fresh agent instances in a loop (max 10 iterations by default)
 - Supports two agents:
   - **Amp**: Uses `amp --dangerously-allow-all`
-  - **Claude Code**: Uses `claude --model opus --dangerously-skip-permissions`
+  - **Claude Code**: Uses `claude --model opusplan --dangerously-skip-permissions`
 - Pipes `prompt.md` into each agent instance
 - Archives previous runs when `branchName` changes
 - Exits when `<promise>COMPLETE</promise>` appears in output
@@ -179,7 +179,7 @@ Add to `~/.config/amp/settings.json`:
 Enables automatic handoff when context fills, allowing Ralph to handle large stories.
 
 #### For Claude Code Users
-Claude Code automatically uses the Opus model when running Ralph, which provides the best reasoning capabilities for complex coding tasks. No additional configuration needed.
+Claude Code automatically uses the Opus Plan model when running Ralph, which provides extended planning capabilities and best reasoning for complex coding tasks. No additional configuration needed.
 
 ### Installing Skills Globally
 ```bash

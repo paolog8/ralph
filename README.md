@@ -86,7 +86,7 @@ This creates `prd.json` with user stories structured for autonomous execution.
 **Examples:**
 ```bash
 ./scripts/ralph/ralph.sh amp      # Run with Amp, 10 iterations
-./scripts/ralph/ralph.sh claude 5 # Run with Claude Code (Opus model), 5 iterations
+./scripts/ralph/ralph.sh claude 5 # Run with Claude Code (Opus Plan model), 5 iterations
 ```
 
 Ralph will:
@@ -142,9 +142,9 @@ Ralph supports two AI coding agents:
 ### Claude Code
 - Use `./ralph.sh claude`
 - Requires Claude Code installed and authenticated
-- Uses Opus model by default for best reasoning
+- Uses Opus Plan model by default for extended planning and best reasoning
 - Uses `--dangerously-skip-permissions` flag for autonomous operation
-- Recommended for complex reasoning tasks
+- Recommended for complex reasoning and planning tasks
 
 Both agents follow the same workflow and use the same `prompt.md` instructions.
 

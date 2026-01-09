@@ -83,7 +83,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   if [ "$AGENT" = "amp" ]; then
     OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr) || true
   elif [ "$AGENT" = "claude" ]; then
-    OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" | claude --model opus --dangerously-skip-permissions 2>&1 | tee /dev/stderr) || true
+    OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" | claude --model opusplan --dangerously-skip-permissions 2>&1 | tee /dev/stderr) || true
   fi
   
   # Check for completion signal
