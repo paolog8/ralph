@@ -90,7 +90,7 @@ This creates `prd.json` with user stories structured for autonomous execution.
 ```
 
 Ralph will:
-1. Create a feature branch (from PRD `branchName`)
+1. Create a feature branch from `develop` (using PRD `branchName`)
 2. Pick the highest priority story where `passes: false`
 3. Implement that single story
 4. Run quality checks (typecheck, tests)
@@ -100,7 +100,7 @@ Ralph will:
 8. Repeat until all stories pass or max iterations reached
 9. When all stories pass:
    - Push branch to remote
-   - Create pull request with summary of completed work
+   - Create pull request to `develop` branch with summary of completed work
    - Exit with completion signal
 
 ## Key Files
@@ -150,6 +150,13 @@ Both agents follow the same workflow and use the same `prompt.md` instructions.
 
 ## Critical Concepts
 
+### Branching Strategy
+
+Ralph follows Git Flow branching:
+- **All feature branches are created from `develop`**, never from `main`
+- Pull requests are created targeting the `develop` branch
+- This ensures features are integrated into the development branch before production
+
 ### Each Iteration = Fresh Context
 
 Each iteration spawns a **new agent instance** with clean context. The only memory between iterations is:
@@ -196,7 +203,7 @@ Frontend stories must include "Verify in browser using dev-browser skill" in acc
 
 When all stories have `passes: true`, Ralph:
 1. Pushes the feature branch to remote
-2. Creates a pull request summarizing all completed stories
+2. Creates a pull request to `develop` branch summarizing all completed stories
 3. Outputs `<promise>COMPLETE</promise>` and the loop exits
 
 ## Debugging

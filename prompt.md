@@ -6,7 +6,14 @@ You are an autonomous coding agent working on a software project.
 
 1. Read the PRD at `prd.json` (in the same directory as this file)
 2. Read the progress log at `progress.txt` (check Codebase Patterns section first)
-3. Check you're on the correct branch from PRD `branchName`. If not, check it out or create from main.
+3. **CRITICAL - Branch Management:**
+   - Check if you're on the correct branch specified in PRD `branchName`
+   - If the branch does NOT exist: **ALWAYS create it from `develop`** using:
+     ```bash
+     git checkout develop && git pull origin develop && git checkout -b [branchName]
+     ```
+   - If the branch exists: Check it out with `git checkout [branchName]`
+   - **NEVER create branches from `main`** - branches MUST be created from `develop`
 4. Pick the **highest priority** user story where `passes: false`
 5. Implement that single user story
 6. Run quality checks (e.g., typecheck, lint, test - use whatever your project requires)
@@ -14,6 +21,24 @@ You are an autonomous coding agent working on a software project.
 8. If checks pass, commit ALL changes with message: `feat: [Story ID] - [Story Title]`
 9. Update the PRD to set `passes: true` for the completed story
 10. Append your progress to `progress.txt`
+
+## Branching Strategy - CRITICAL
+
+**ALL feature branches MUST be created from `develop`, NOT from `main`.**
+
+This project follows a standard Git Flow branching model:
+- `main` - Production-ready code
+- `develop` - Integration branch for features
+- `feature/*` or `ralph/*` - Feature branches (created from `develop`)
+
+**When creating a new branch:**
+1. Always ensure you're starting from `develop`
+2. Pull the latest changes: `git checkout develop && git pull origin develop`
+3. Create your feature branch: `git checkout -b [branchName]`
+
+**When creating a pull request:**
+- Always set the base branch to `develop` using `--base develop`
+- NEVER merge feature branches directly into `main`
 
 ## Progress Report Format
 
@@ -106,9 +131,10 @@ If ALL stories are complete and passing:
    - Review all completed user stories from prd.json
    - Check progress.txt for a summary of changes
    - Use `git log` to see the commit history
+   - **CRITICAL**: Set the base branch to `develop` (not `main`)
    - Create a PR with a comprehensive summary:
    ```bash
-   gh pr create --title "[Feature Name from PRD]" --body "$(cat <<'EOF'
+   gh pr create --base develop --title "[Feature Name from PRD]" --body "$(cat <<'EOF'
    ## Summary
    [Brief description from PRD description field]
 

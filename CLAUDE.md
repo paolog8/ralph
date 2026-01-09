@@ -86,7 +86,7 @@ git log --oneline -10
 ### Iteration Workflow
 Each agent instance follows this cycle:
 1. Read `prd.json` and `progress.txt`
-2. Checkout/create branch from `branchName`
+2. Checkout/create branch from `develop` (using `branchName` from PRD)
 3. Pick highest priority story where `passes: false`
 4. Implement that single story
 5. Run quality checks (typecheck, tests, etc.)
@@ -95,7 +95,7 @@ Each agent instance follows this cycle:
 8. Append learnings to `progress.txt`
 9. If all stories pass:
    - Push branch to remote
-   - Create pull request with summary of all completed stories
+   - Create pull request to `develop` branch with summary of all completed stories
    - Output `<promise>COMPLETE</promise>`
 
 ## Skills
@@ -116,6 +116,13 @@ Converts markdown PRDs to `prd.json` format:
 - Archives previous runs when branch changes
 
 ## Critical Concepts
+
+### Branching Strategy
+Ralph follows Git Flow branching:
+- **All feature branches are created from `develop`**, never from `main`
+- Pull requests target the `develop` branch
+- The prompt explicitly enforces this with `git checkout develop && git pull origin develop && git checkout -b [branchName]`
+- PRs are created with `gh pr create --base develop`
 
 ### Story Size
 Each story must be completable in ONE Amp iteration (one context window). Too large = LLM runs out of context = broken code.

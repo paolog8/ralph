@@ -48,3 +48,5 @@ npm run dev
 - Always update AGENTS.md with discovered patterns for future iterations
 - When all stories pass, Ralph creates a pull request before exiting
 - Claude Code uses Opus Plan model by default for extended planning and reasoning
+- **All feature branches are created from `develop`**, not `main` (Git Flow)
+- Pull requests target the `develop` branch
