@@ -88,6 +88,10 @@ Ralph will:
 6. Update `prd.json` to mark story as `passes: true`
 7. Append learnings to `progress.txt`
 8. Repeat until all stories pass or max iterations reached
+9. When all stories pass:
+   - Push branch to remote
+   - Create pull request with summary of completed work
+   - Exit with completion signal
 
 ## Key Files
 
@@ -162,7 +166,10 @@ Frontend stories must include "Verify in browser using dev-browser skill" in acc
 
 ### Stop Condition
 
-When all stories have `passes: true`, Ralph outputs `<promise>COMPLETE</promise>` and the loop exits.
+When all stories have `passes: true`, Ralph:
+1. Pushes the feature branch to remote
+2. Creates a pull request summarizing all completed stories
+3. Outputs `<promise>COMPLETE</promise>` and the loop exits
 
 ## Debugging
 
