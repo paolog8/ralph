@@ -1,7 +1,7 @@
 #!/bin/bash
 # Ralph Wiggum - Long-running AI agent loop
 # Usage: ./ralph.sh <agent> [max_iterations]
-#   agent: "amp" or "claude"
+#   agent: "amp", "claude", or "gemini"
 #   max_iterations: number of iterations (default: 10)
 
 set -e
@@ -10,7 +10,7 @@ set -e
 if [ -z "$1" ]; then
   echo "Error: Agent parameter is required"
   echo "Usage: ./ralph.sh <agent> [max_iterations]"
-  echo "  agent: 'amp' or 'claude'"
+  echo "  agent: 'amp', 'claude', or 'gemini'"
   echo "  max_iterations: number (default: 10)"
   exit 1
 fi
@@ -19,9 +19,9 @@ AGENT="$1"
 MAX_ITERATIONS=${2:-10}
 
 # Validate agent parameter
-if [ "$AGENT" != "amp" ] && [ "$AGENT" != "claude" ]; then
+if [ "$AGENT" != "amp" ] && [ "$AGENT" != "claude" ] && [ "$AGENT" != "gemini" ]; then
   echo "Error: Invalid agent '$AGENT'"
-  echo "Agent must be 'amp' or 'claude'"
+  echo "Agent must be 'amp', 'claude', or 'gemini'"
   exit 1
 fi
 
@@ -84,6 +84,8 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr) || true
   elif [ "$AGENT" = "claude" ]; then
     OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" | claude --model opusplan --dangerously-skip-permissions 2>&1 | tee /dev/stderr) || true
+  elif [ "$AGENT" = "gemini" ]; then
+    OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" | gemini --approval-mode=yolo 2>&1 | tee /dev/stderr) || true
   fi
   
   # Check for completion signal

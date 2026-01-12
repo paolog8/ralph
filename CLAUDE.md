@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What is Ralph?
 
-Ralph is an autonomous AI agent loop that spawns fresh agent instances (Amp or Claude Code) repeatedly until all PRD items are complete. Each iteration has clean context - memory persists only through git history, `progress.txt`, and `prd.json`.
+Ralph is an autonomous AI agent loop that spawns fresh agent instances (Amp, Claude Code, or Gemini) repeatedly until all PRD items are complete. Each iteration has clean context - memory persists only through git history, `progress.txt`, and `prd.json`.
 
 ## Commands
 
@@ -15,6 +15,7 @@ Ralph is an autonomous AI agent loop that spawns fresh agent instances (Amp or C
 # Examples:
 ./ralph.sh amp          # Run with Amp, 10 iterations
 ./ralph.sh claude       # Run with Claude Code (Opus Plan model), 10 iterations
+./ralph.sh gemini       # Run with Gemini CLI (auto-approval mode), 10 iterations
 ./ralph.sh claude 5     # Run with Claude Code, 5 iterations
 ```
 
@@ -43,9 +44,10 @@ git log --oneline -10
 
 ### Core Loop (ralph.sh)
 - Spawns fresh agent instances in a loop (max 10 iterations by default)
-- Supports two agents:
+- Supports three agents:
   - **Amp**: Uses `amp --dangerously-allow-all`
   - **Claude Code**: Uses `claude --model opusplan --dangerously-skip-permissions`
+  - **Gemini**: Uses `gemini --approval-mode=yolo`
 - Pipes `prompt.md` into each agent instance
 - Archives previous runs when `branchName` changes
 - Exits when `<promise>COMPLETE</promise>` appears in output
