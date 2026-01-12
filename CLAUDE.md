@@ -4,19 +4,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What is Ralph?
 
-Ralph is an autonomous AI agent loop that spawns fresh agent instances (Amp, Claude Code, or Gemini) repeatedly until all PRD items are complete. Each iteration has clean context - memory persists only through git history, `progress.txt`, and `prd.json`.
+Ralph is an autonomous AI agent loop that spawns fresh agent instances (Amp, Claude Code, Gemini, or OpenCode) repeatedly until all PRD items are complete. Each iteration has clean context - memory persists only through git history, `progress.txt`, and `prd.json`.
 
 ## Commands
 
 ### Running Ralph (in projects that use it)
 ```bash
-./ralph.sh <agent> [max_iterations]
+./ralph.sh <agent> [max_iterations] [model]
 
 # Examples:
 ./ralph.sh amp          # Run with Amp, 10 iterations
 ./ralph.sh claude       # Run with Claude Code (Opus Plan model), 10 iterations
 ./ralph.sh gemini       # Run with Gemini CLI (auto-approval mode), 10 iterations
+./ralph.sh opencode     # Run with OpenCode (user's default model), 10 iterations
+./ralph.sh opencode 10 anthropic/claude-sonnet-4-20250514  # OpenCode with specific model
 ./ralph.sh claude 5     # Run with Claude Code, 5 iterations
+./ralph.sh -h           # Show help with all options
 ```
 
 ### Flowchart Development
@@ -44,10 +47,12 @@ git log --oneline -10
 
 ### Core Loop (ralph.sh)
 - Spawns fresh agent instances in a loop (max 10 iterations by default)
-- Supports three agents:
+- **Auto-detects project root** via `git rev-parse --show-toplevel` and changes to that directory before running agents (so agents have access to all project files regardless of where ralph.sh is located)
+- Supports four agents:
   - **Amp**: Uses `amp --dangerously-allow-all`
   - **Claude Code**: Uses `claude --model opusplan --dangerously-skip-permissions`
   - **Gemini**: Uses `gemini --approval-mode=yolo`
+  - **OpenCode**: Uses `opencode run` (auto-approves in non-interactive mode, supports `--model` flag)
 - Pipes `prompt.md` into each agent instance
 - Archives previous runs when `branchName` changes
 - Exits when `<promise>COMPLETE</promise>` appears in output
@@ -189,6 +194,22 @@ Enables automatic handoff when context fills, allowing Ralph to handle large sto
 
 #### For Claude Code Users
 Claude Code automatically uses the Opus Plan model when running Ralph, which provides extended planning capabilities and best reasoning for complex coding tasks. No additional configuration needed.
+
+#### For OpenCode Users
+OpenCode supports 75+ model providers. Configure your preferred provider's API key and optionally pass a model:
+```bash
+# Use default configured model
+./ralph.sh opencode
+
+# Specify a model (format: provider/model)
+./ralph.sh opencode 10 anthropic/claude-sonnet-4-20250514
+./ralph.sh opencode 10 openai/gpt-4o
+./ralph.sh opencode 10 google/gemini-2.0-flash
+
+# List available models
+opencode models
+```
+See https://opencode.ai/docs/providers/ for provider setup.
 
 ### Installing Skills Globally
 ```bash
